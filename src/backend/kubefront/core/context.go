@@ -1,9 +1,9 @@
 package core
 
-import "k8s.io/client-go/kubernetes"
+import "github.com/ericchiang/k8s"
 
 //Context is used for kubefront backend states
 type Context struct {
 	Config *Config
-	Client *kubernetes.Clientset
+	Client *k8s.Client
 }

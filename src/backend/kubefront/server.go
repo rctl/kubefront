@@ -1,32 +1,34 @@
 package kubefront
 
 import (
+	"github.com/ericchiang/k8s"
 	"github.com/gin-gonic/gin"
 	"github.com/rctl/kubefront/src/backend/kubefront/authentication"
 	"github.com/rctl/kubefront/src/backend/kubefront/core"
-	"k8s.io/client-go/kubernetes"
 )
 
 //Server is a kubefront backend server instance
 type Server struct {
-	core.Context
+	*core.Context
 }
 
 //New creates a new instance of a kubefront server
-func New(JWTSectet string, client *kubernetes.Clientset) *Server {
+func New(JWTSectet string, client *k8s.Client) *Server {
 	return &Server{
-		Config: &core.Config{
-			JWTSecret: JWTSectet,
+		Context: &core.Context{
+			Config: &core.Config{
+				JWTSecret: JWTSectet,
+			},
+			Client: client,
 		},
-		Client: client,
 	}
 }
 
 //Serve starts the Kubefront API and makes it accessable
-func (s *Server) Serve(addr []string) error {
+func (s *Server) Serve(addr ...string) error {
 	r := gin.Default()
 	//Register API routes
-	authentication.Routes(r.Group("/auth/"), s)
+	authentication.Routes(r.Group("/auth/"), s.Context)
 	//Start server
 	return r.Run(addr...)
 }
