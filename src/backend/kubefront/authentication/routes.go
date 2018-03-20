@@ -7,19 +7,18 @@ import (
 
 //Service is an instance of the authentication API handler
 type Service struct {
-	config *core.Config
+	ctx *core.Context
 }
 
 //Routes setup routes for the Authentication API
-func Routes(r *gin.RouterGroup, config *core.Config) {
-	//MOD: This struct holds a config, which is passed from the implementing package, it contains needed global params for routes to function
-	s := Service{
-		config: config,
+func Routes(r *gin.RouterGroup, ctx *core.Context) {
+	s := &Service{
+		ctx: ctx,
 	}
 	//Setup routes without need for authentication
 	r.POST("/", s.authenticate)
 	//Setup routes with need for authentication
-	r.Use(core.AuthMiddleware(config))
+	r.Use(core.AuthMiddleware(ctx))
 	{
 		r.GET("/", s.profile)
 	}

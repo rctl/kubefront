@@ -5,7 +5,7 @@ import (
 )
 
 //AuthMiddleware authenticates a user by its token
-func AuthMiddleware(config *Config) gin.HandlerFunc {
+func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 	}

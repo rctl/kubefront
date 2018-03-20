@@ -3,20 +3,22 @@ package kubefront
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rctl/kubefront/src/backend/kubefront/authentication"
-	"github.com/rctl/kubefront/src/backend/kubefront/data"
+	"github.com/rctl/kubefront/src/backend/kubefront/core"
+	"k8s.io/client-go/kubernetes"
 )
 
 //Server is a kubefront backend server instance
 type Server struct {
-	config *data.Config
+	core.Context
 }
 
 //New creates a new instance of a kubefront server
-func New(JWTSectet string) *Server {
+func New(JWTSectet string, client *kubernetes.Clientset) *Server {
 	return &Server{
-		config: &data.Config{
+		Config: &core.Config{
 			JWTSecret: JWTSectet,
 		},
+		Client: client,
 	}
 }
 
@@ -24,7 +26,7 @@ func New(JWTSectet string) *Server {
 func (s *Server) Serve(addr []string) error {
 	r := gin.Default()
 	//Register API routes
-	authentication.Routes(r.Group("/auth/"), s.config)
+	authentication.Routes(r.Group("/auth/"), s)
 	//Start server
 	return r.Run(addr...)
 }
