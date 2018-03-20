@@ -28,4 +28,8 @@ Kubefront is a dashboard for Kubernetes clusters that simplifies cluster managem
 - The backend runs in a Docker container. It can connect to a cluster from within the cluster or externally through the Kubernetes API. Because of this it can be run locally and be connected to a remote cluster. 
 - Where relevant, the backend contains UNIT tests to ensure quality. However, because the underlying Kubernetes API is hard to mock it will not have any UNIT tests for that interactions. In that case, e2e tests will be used instead, if required.
 - Custom built bash scripts to simplify building, running, deploying and testing kubefront will be made.
- 
+- Kubefront workers (go routines launced from the Kubefront API) will be used to make async tasks for the user.
+
+The image below explains how the Kubefront architecture looks like.
+
+![Kubefront architecture](kubefront-architecture.png "Kubefront architecture")
