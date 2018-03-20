@@ -21,10 +21,10 @@ func New(JWTSectet string) *Server {
 }
 
 //Serve starts the Kubefront API and makes it accessable
-func (s *Server) Serve() error {
+func (s *Server) Serve(addr []string) error {
 	r := gin.Default()
 	//Register API routes
 	authentication.Routes(r.Group("/auth/"), s.config)
 	//Start server
-	return r.Run()
+	return r.Run(addr...)
 }
