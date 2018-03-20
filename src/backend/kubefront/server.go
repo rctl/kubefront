@@ -1,6 +1,8 @@
 package kubefront
 
 import (
+	"database/sql"
+
 	"github.com/ericchiang/k8s"
 	"github.com/gin-gonic/gin"
 	"github.com/rctl/kubefront/src/backend/kubefront/authentication"
@@ -13,13 +15,14 @@ type Server struct {
 }
 
 //New creates a new instance of a kubefront server
-func New(JWTSectet string, client *k8s.Client) *Server {
+func New(JWTSectet string, client *k8s.Client, database *sql.DB) *Server {
 	return &Server{
 		Context: &core.Context{
 			Config: &core.Config{
 				JWTSecret: JWTSectet,
 			},
-			Client: client,
+			Client:   client,
+			Database: database,
 		},
 	}
 }

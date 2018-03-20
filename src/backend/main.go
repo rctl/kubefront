@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"io/ioutil"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/ericchiang/k8s"
 	"github.com/ghodss/yaml"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/rctl/kubefront/src/backend/kubefront"
 )
 
@@ -40,6 +42,10 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	k := kubefront.New("*secret", client)
+	db, err := sql.Open("sqlite3", "./data.db")
+	if err != nil {
+		panic(err.Error())
+	}
+	k := kubefront.New("*secret", client, db)
 	k.Serve()
 }

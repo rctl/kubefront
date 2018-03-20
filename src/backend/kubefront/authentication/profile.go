@@ -9,5 +9,6 @@ import (
 func (s *Service) profile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"username": c.MustGet("username"),
+		"scopes":   c.MustGet("scopes"),
 	})
 }
