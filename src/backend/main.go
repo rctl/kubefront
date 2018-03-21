@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -15,13 +16,14 @@ import (
 )
 
 func main() {
+	secret := flag.String("secret", "", "(required) secret key to use for user token validation")
 	var kubeconfig *string
 	if home := os.Getenv("HOME"); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}
-	secret := flag.String("secret", "", "(required) secret key to use for user token validation")
+	dbpath := flag.String("db", "./data.db", "(optional) path to sqlite3 database file")
 	flag.Parse()
 	if *secret == "" {
 		flag.PrintDefaults()
@@ -42,10 +44,21 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := sql.Open("sqlite3", *dbpath)
 	if err != nil {
 		panic(err.Error())
 	}
 	k := kubefront.New("*secret", client, db)
+	if err := k.InititalizeEmptyDatabase(); err != nil {
+		fmt.Println("Failed to initialize database.")
+		fmt.Println(err.Error())
+	}
+	password, err := k.CreateAdminUser()
+	if err != nil {
+		fmt.Println("Failed to create admin user.")
+		fmt.Println(err.Error())
+	} else {
+		fmt.Printf("Admin password is: %s\n", password)
+	}
 	k.Serve()
 }

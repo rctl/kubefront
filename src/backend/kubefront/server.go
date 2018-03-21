@@ -1,6 +1,7 @@
 package kubefront
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/ericchiang/k8s"
@@ -18,6 +19,7 @@ type Server struct {
 func New(JWTSectet string, client *k8s.Client, database *sql.DB) *Server {
 	return &Server{
 		Context: &core.Context{
+			Context: context.Background(),
 			Config: &core.Config{
 				JWTSecret: JWTSectet,
 			},
