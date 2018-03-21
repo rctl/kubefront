@@ -77,7 +77,7 @@ func (s *Server) CreateAdminUser() (string, error) {
 		tx.Rollback()
 		return "", err
 	}
-	_, err = tx.ExecContext(s, "INSERT INTO permissions (username, scope, permission) VALUES ('admin', '*', '*')")
+	_, err = tx.ExecContext(s, "INSERT INTO permissions (username, scope, permission) VALUES ('admin', '.+', '.+')")
 	if err != nil {
 		tx.Rollback()
 		return "", err

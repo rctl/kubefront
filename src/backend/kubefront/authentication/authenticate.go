@@ -27,20 +27,7 @@ func (s *Service) authenticate(c *gin.Context) {
 		c.String(http.StatusForbidden, "Username or password is invalid.")
 		return
 	}
-	//Get user permissions from database and construct JWT claim
-	rows, err := s.ctx.Database.QueryContext(c, "SELECT scope, permission FROM permissions WHERE username=?", username)
-	if err != nil {
-		fmt.Println(err.Error())
-		c.String(http.StatusForbidden, "Username or password is invalid.")
-		return
-	}
-	var scope string
-	var permission string
-	scopes := make(map[string]string)
-	for rows.Next() {
-		rows.Scan(&scope, &permission)
-		scopes[scope] = permission
-	}
+	//Create a user session
 	session := uuid.Must(uuid.NewV4()).String()
 	tx, err := s.ctx.Database.BeginTx(c, nil)
 	if err != nil {
@@ -54,9 +41,22 @@ func (s *Service) authenticate(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "Could not setup user session.")
 		return
 	}
+	//Fetch users permissions from database
+	rows, err := s.ctx.Database.QueryContext(c, "SELECT scope, permission FROM permissions WHERE username=?", username)
+	if err != nil {
+		fmt.Println(err.Error())
+		c.String(http.StatusForbidden, "Could not fetch user permissions for supplied token.")
+		return
+	}
+	var scope string
+	var permission string
+	scopes := make(map[string]string)
+	for rows.Next() {
+		rows.Scan(&scope, &permission)
+		scopes[scope] = permission
+	}
 	//Create JWT token and pass it to the client
 	jwtClaim := jwt.MapClaims{
-		"scopes":   scopes,
 		"username": username,
 		"session":  session,
 	}
@@ -66,6 +66,7 @@ func (s *Service) authenticate(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "Could not generate token on server-side.")
 		return
 	}
+	//Respond with token, session id and the available scopes
 	c.JSON(http.StatusOK, gin.H{
 		"token":   token,
 		"session": session,
