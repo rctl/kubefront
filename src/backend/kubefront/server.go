@@ -32,8 +32,11 @@ func New(JWTSectet string, client *k8s.Client, database *sql.DB) *Server {
 //Serve starts the Kubefront API and makes it accessable
 func (s *Server) Serve(addr ...string) error {
 	r := gin.Default()
-	//Register API routes
-	authentication.Routes(r.Group("/auth/"), s.Context)
+	r.Use(core.CORSMiddleware())
+	{
+		//Register API routes
+		authentication.Routes(r.Group("/auth/"), s.Context)
+	}
 	//Start server
 	return r.Run(addr...)
 }

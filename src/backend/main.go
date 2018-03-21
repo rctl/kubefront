@@ -48,7 +48,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	k := kubefront.New("*secret", client, db)
+	k := kubefront.New(*secret, client, db)
 	if err := k.InititalizeEmptyDatabase(); err != nil {
 		fmt.Println("Failed to initialize database.")
 		fmt.Println(err.Error())
@@ -60,5 +60,5 @@ func main() {
 	} else {
 		fmt.Printf("Admin password is: %s\n", password)
 	}
-	k.Serve()
+	k.Serve(":8081")
 }

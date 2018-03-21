@@ -1,5 +1,5 @@
 <template>
-  <div class="valign-wrapper placeholder grey lighten-5">
+  <div class="valign-wrapper placeholder">
     <SignInCard 
       class="col m6 sign-in-card z-depth-2"
       message="Please sign in to access your kubernetes cluster." 
@@ -24,8 +24,9 @@ export default {
     SignInCard
   },
   methods: {
+    //Triggered when user has signed in
     signedIn: function(token) {
-      console.log(token);
+      
     }
   }
 };
