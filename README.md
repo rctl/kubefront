@@ -9,8 +9,8 @@ Kubefront is a dashboard for Kubernetes clusters that simplifies cluster managem
 *User can*
 
 - [ ] Run Kubefront in Kubernetes and access the Web UI
-- [ ] Sign in as administrator and create new accounts with specific permissions
-- [ ] Manage and delete user accounts
+- [x] Basic auth system and ability to sign in as administrator
+- [ ] Create manage and delete other user accounts
 - [ ] See basic statistics from the cluster
 - [ ] Manage the cluster with basic operations (managing minions)
 - [ ] Build application definitions (templating applications)
