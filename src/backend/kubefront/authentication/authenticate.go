@@ -13,9 +13,15 @@ import (
 //authenticate exchanges credentials for a valid token
 func (s *Service) authenticate(c *gin.Context) {
 	username := c.PostForm("username")
+	tx, err := s.ctx.Database.BeginTx(c, nil)
+	if err != nil {
+		fmt.Println(err.Error())
+		c.String(http.StatusInternalServerError, "Could not connect to database.")
+		return
+	}
 	//Fetch user password from the database
 	var password string
-	err := s.ctx.Database.QueryRowContext(c, "SELECT password FROM users WHERE username=?", username).Scan(&password)
+	err = tx.QueryRow("SELECT password FROM users WHERE username=?", username).Scan(&password)
 	if err != nil {
 		fmt.Println(err.Error())
 		c.String(http.StatusForbidden, "Username or password is invalid.")
@@ -29,23 +35,20 @@ func (s *Service) authenticate(c *gin.Context) {
 	}
 	//Create a user session
 	session := uuid.Must(uuid.NewV4()).String()
-	tx, err := s.ctx.Database.BeginTx(c, nil)
-	if err != nil {
-		c.String(http.StatusInternalServerError, "Could not connect to backend database.")
-		return
-	}
-	tx.ExecContext(c, "INSERT INTO sessions (username,session) VALUES (?, ?)", username, session)
-	err = tx.Commit()
-	if err != nil {
-		tx.Rollback()
-		c.String(http.StatusInternalServerError, "Could not setup user session.")
-		return
-	}
+	tx.Exec("INSERT INTO sessions (username,session) VALUES (?, ?)", username, session)
 	//Fetch users permissions from database
-	rows, err := s.ctx.Database.QueryContext(c, "SELECT scope, permission FROM permissions WHERE username=?", username)
+	rows, err := tx.Query("SELECT scope, permission FROM permissions WHERE username=?", username)
+	defer rows.Close()
 	if err != nil {
 		fmt.Println(err.Error())
 		c.String(http.StatusForbidden, "Could not fetch user permissions for supplied token.")
+		return
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		fmt.Println(err.Error())
+		c.String(http.StatusInternalServerError, "Could not setup user session.")
 		return
 	}
 	var scope string

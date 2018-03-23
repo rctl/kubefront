@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/signal"
 	"path/filepath"
 
 	"github.com/ericchiang/k8s"
@@ -48,7 +50,9 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	k := kubefront.New(*secret, client, db)
+	defer db.Close()
+	ctx := context.Background()
+	k := kubefront.New(ctx, *secret, client, db)
 	if err := k.InititalizeEmptyDatabase(); err != nil {
 		fmt.Println("Failed to initialize database.")
 		fmt.Println(err.Error())
@@ -60,5 +64,19 @@ func main() {
 	} else {
 		fmt.Printf("Admin password is: %s\n", password)
 	}
-	k.Serve(":8081")
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for _ = range c {
+			db.Close()
+			ctx.Done()
+			fmt.Println("Database closed")
+			os.Exit(0)
+		}
+	}()
+	err = k.Serve(":8081")
+	if err != nil {
+		k.Done()
+		panic(err.Error())
+	}
 }

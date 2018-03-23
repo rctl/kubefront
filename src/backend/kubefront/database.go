@@ -1,6 +1,7 @@
 package kubefront
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 
@@ -10,11 +11,19 @@ import (
 
 //InititalizeEmptyDatabase populates an empty database with tables needed for kubefront
 func (s *Server) InititalizeEmptyDatabase() error {
-	tx, err := s.Database.BeginTx(s, &sql.TxOptions{})
+	ctx := context.Background()
+	defer ctx.Done()
+	tx, err := s.Database.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		return err
 	}
-	_, err = tx.ExecContext(s, `CREATE TABLE users (
+	var count int
+	err = tx.QueryRow("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='users';").Scan(&count)
+	if err != nil || count == 1 {
+		tx.Rollback()
+		return errors.New("Database already initialized")
+	}
+	_, err = tx.Exec(`CREATE TABLE users (
         username VARCHAR(255) NOT NULL,
 		password VARCHAR(1024) NOT NULL,
 		PRIMARY KEY (username)
@@ -23,7 +32,7 @@ func (s *Server) InititalizeEmptyDatabase() error {
 		tx.Rollback()
 		return err
 	}
-	_, err = tx.ExecContext(s, `CREATE TABLE sessions (
+	_, err = tx.Exec(`CREATE TABLE sessions (
         username VARCHAR(255) NOT NULL,
 		session VARCHAR(255) NOT NULL,
 		PRIMARY KEY (username,session)
@@ -32,7 +41,7 @@ func (s *Server) InititalizeEmptyDatabase() error {
 		tx.Rollback()
 		return err
 	}
-	_, err = tx.ExecContext(s, `CREATE TABLE permissions (
+	_, err = tx.Exec(`CREATE TABLE permissions (
         username VARCHAR(255) NOT NULL,
 		scope VARCHAR(64) NOT NULL,
 		permission VARCHAR(64) NOT NULL,
@@ -48,7 +57,9 @@ func (s *Server) InititalizeEmptyDatabase() error {
 
 //CreateAdminUser creates an admin user and returnes a random password for it
 func (s *Server) CreateAdminUser() (string, error) {
-	tx, err := s.Database.BeginTx(s, nil)
+	ctx := context.Background()
+	defer ctx.Done()
+	tx, err := s.Database.BeginTx(ctx, nil)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +69,9 @@ func (s *Server) CreateAdminUser() (string, error) {
 		return "", err
 	}
 	rows, err := tx.Query("SELECT COUNT(username) FROM users WHERE username='admin'")
+	defer rows.Close()
 	if err != nil {
+		tx.Rollback()
 		return "", err
 	}
 	var count int
@@ -66,18 +79,21 @@ func (s *Server) CreateAdminUser() (string, error) {
 		rows.Scan(&count)
 	}
 	if count != 0 {
+		tx.Rollback()
 		return "", errors.New("admin user already exists")
 	}
-	prep, err := tx.PrepareContext(s, "INSERT INTO users (username, password) VALUES (?, ?)")
-	if err != nil {
-		return "", err
-	}
-	_, err = prep.ExecContext(s, "admin", hashedPassword)
+	prep, err := tx.Prepare("INSERT INTO users (username, password) VALUES (?, ?)")
+	defer prep.Close()
 	if err != nil {
 		tx.Rollback()
 		return "", err
 	}
-	_, err = tx.ExecContext(s, "INSERT INTO permissions (username, scope, permission) VALUES ('admin', '.+', '.+')")
+	_, err = prep.Exec("admin", hashedPassword)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	_, err = tx.Exec("INSERT INTO permissions (username, scope, permission) VALUES ('admin', '.+', '.+')")
 	if err != nil {
 		tx.Rollback()
 		return "", err

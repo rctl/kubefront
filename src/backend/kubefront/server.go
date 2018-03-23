@@ -16,10 +16,10 @@ type Server struct {
 }
 
 //New creates a new instance of a kubefront server
-func New(JWTSectet string, client *k8s.Client, database *sql.DB) *Server {
+func New(ctx context.Context, JWTSectet string, client *k8s.Client, database *sql.DB) *Server {
 	return &Server{
 		Context: &core.Context{
-			Context: context.Background(),
+			Context: ctx,
 			Config: &core.Config{
 				JWTSecret: JWTSectet,
 			},

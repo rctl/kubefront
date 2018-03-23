@@ -28,18 +28,25 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 
 		//Handle token claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			tx, err := ctx.Database.BeginTx(c, nil)
+			if err != nil {
+				c.String(http.StatusInternalServerError, "Could not connect to database.")
+				c.Abort()
+				return
+			}
 			//Check session validity
 			session := claims["session"]
 			username := claims["username"]
 			var count int
-			err := ctx.Database.QueryRowContext(c, "SELECT COUNT(*) FROM sessions WHERE session=? AND username=?", session, username).Scan(&count)
+			err = tx.QueryRow("SELECT COUNT(*) FROM sessions WHERE session=? AND username=?", session, username).Scan(&count)
 			if err != nil || count != 1 {
 				c.String(http.StatusForbidden, "Your session has expired. Please sign in again.")
 				c.Abort()
 				return
 			}
 			//Fetch user permissions
-			rows, err := ctx.Database.QueryContext(c, "SELECT scope, permission FROM permissions WHERE username=?", username)
+			rows, err := tx.Query("SELECT scope, permission FROM permissions WHERE username=?", username)
+			defer rows.Close()
 			if err != nil {
 				fmt.Println(err.Error())
 				c.String(http.StatusForbidden, "Could not fetch user permissions for supplied token.")
@@ -52,6 +59,8 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 				rows.Scan(&scope, &permission)
 				scopes[scope] = permission
 			}
+
+			tx.Commit()
 
 			//Set scope variables
 			c.Set("username", username)
