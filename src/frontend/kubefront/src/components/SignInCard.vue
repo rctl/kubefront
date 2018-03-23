@@ -42,14 +42,12 @@ export default {
   methods: {
     signIn() {
       //Package data for sign in
-      var formData = new FormData();
-      formData.set("username", this.username)
-      formData.set("password", this.password)
       this.$bus.$emit('loading')
       //Send request
-      this.$http
-      .post("/auth/", formData)
-      .then(this.success)
+      this.$auth.signIn(this.username, this.password)
+      .then(() => {
+        this.$bus.$emit('done')
+      })
       .catch(r => {
         //Notify failure to user
         if(r.response){
@@ -59,20 +57,7 @@ export default {
           //No response is a server error
           M.toast({html: "Could not sign in due to server error."})
         }
-        this.fail(r.response)
       });
-    },
-    success(r) {
-      //Store token and notify sign in event to bus and component listener
-      localStorage.setItem("token", r.data.token)
-      this.$bus.$emit('signedIn')
-      this.$bus.$emit('done')
-      this.$emit('success', r.data)
-    },
-    fail(r) {
-      //Emit failure to component listener
-      this.$bus.$emit('done')
-      this.$emit('fail', r)
     },
     change() {
       //Show sign in button when there is data in both fields

@@ -3,7 +3,7 @@
     <SignInCard 
       class="col m6 sign-in-card z-depth-2"
       message="Please sign in to access your kubernetes cluster." 
-      v-on:success="signedIn" />
+      />
       <footer class="teal white-text z-depth-4">
         Powered by Kubefront, a kubernetes frontend.
         <span class="right">
@@ -22,12 +22,6 @@ export default {
   name: "welcome",
   components: {
     SignInCard
-  },
-  methods: {
-    //Triggered when user has signed in
-    signedIn: function(token) {
-      
-    }
   }
 };
 </script>

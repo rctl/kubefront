@@ -15,6 +15,7 @@ func (s *Service) authenticate(c *gin.Context) {
 	username := c.PostForm("username")
 	tx, err := s.ctx.Database.BeginTx(c, nil)
 	if err != nil {
+		tx.Rollback()
 		fmt.Println(err.Error())
 		c.String(http.StatusInternalServerError, "Could not connect to database.")
 		return
@@ -23,12 +24,14 @@ func (s *Service) authenticate(c *gin.Context) {
 	var password string
 	err = tx.QueryRow("SELECT password FROM users WHERE username=?", username).Scan(&password)
 	if err != nil {
+		tx.Rollback()
 		fmt.Println(err.Error())
 		c.String(http.StatusForbidden, "Username or password is invalid.")
 		return
 	}
 	//Check if password matches supplied password
 	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(c.PostForm("password"))); err != nil {
+		tx.Rollback()
 		fmt.Println(err.Error())
 		c.String(http.StatusForbidden, "Username or password is invalid.")
 		return
@@ -40,6 +43,7 @@ func (s *Service) authenticate(c *gin.Context) {
 	rows, err := tx.Query("SELECT scope, permission FROM permissions WHERE username=?", username)
 	defer rows.Close()
 	if err != nil {
+		tx.Rollback()
 		fmt.Println(err.Error())
 		c.String(http.StatusForbidden, "Could not fetch user permissions for supplied token.")
 		return
@@ -65,6 +69,7 @@ func (s *Service) authenticate(c *gin.Context) {
 	}
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaim).SignedString([]byte(s.ctx.Config.JWTSecret))
 	if err != nil {
+		tx.Rollback()
 		fmt.Println(err.Error())
 		c.String(http.StatusInternalServerError, "Could not generate token on server-side.")
 		return

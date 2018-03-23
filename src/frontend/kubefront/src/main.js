@@ -1,21 +1,21 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import axios from 'axios'
 import 'materialize-css/sass/materialize.scss'
 import './assets/sass/_material-icons.scss'
 import M from "materialize-css"
 import bus from "./bus"
+import api from "./api"
+import auth from "./services/auth"
 
 Vue.config.productionTip = false
-
-window.axios = axios.create({
-  baseURL: "http://localhost:8081/"
-})
-
-Vue.prototype.$http = window.axios
+//Default protos
+Vue.prototype.$http = api
 Vue.prototype.$bus = bus
+Vue.prototype.$auth = auth
+
 new Vue({
   router,
   render: h => h(App)
 }).$mount('main')
+

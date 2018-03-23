@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     signOut(){
-        this.$bus.$emit("signOut")
+        this.$auth.signOut()
     }
   }
 };
