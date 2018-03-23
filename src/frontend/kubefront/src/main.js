@@ -7,12 +7,14 @@ import M from "materialize-css"
 import bus from "./bus"
 import api from "./api"
 import auth from "./services/auth"
+import nodes from "./services/nodes"
 
 Vue.config.productionTip = false
 //Default protos
 Vue.prototype.$http = api
 Vue.prototype.$bus = bus
 Vue.prototype.$auth = auth
+Vue.prototype.$nodes = nodes
 
 new Vue({
   router,

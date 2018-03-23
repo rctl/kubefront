@@ -4,7 +4,8 @@ import router from '../router'
 
 //States
 let states = {
-    signedIn: false
+    signedIn: false,
+    token: "",
 }
 
 //Broadcasts
@@ -16,6 +17,8 @@ let broadcasts = {
 //Init
 if(localStorage.getItem("token") != undefined){
     states.signedIn = true
+    states.token = localStorage.getItem("token")
+    api.defaults.headers.common['token'] = localStorage.getItem("token");
     bus.$emit(broadcasts.SIGNED_IN)
 }else{
     states.signedIn = false
@@ -37,7 +40,9 @@ export default {
             formData.set("password", password)
             api.post("/auth/", formData)
             .then(r => {
+                api.defaults.headers.common['token'] = r.data.token;
                 states.signedIn = true
+                states.token = r.data.token
                 localStorage.setItem("token", r.data.token)
                 bus.$emit(broadcasts.SIGNED_IN)
                 resolve(r)

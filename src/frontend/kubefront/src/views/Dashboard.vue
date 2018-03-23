@@ -33,6 +33,8 @@
 <script>
 import VueGridLayout from 'vue-grid-layout'
 import NodeCount from '../components/NodeCount'
+import NodeAllocatableCPU from '../components/NodeAllocatableCPU'
+import NodeAllocatableMemory from '../components/NodeAllocatableMemory'
 
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
@@ -59,6 +61,26 @@ export default {
             h: 4,
             i: "node-count"
           },
+        },
+        "node-allocatable-cpu": {
+          component: NodeAllocatableCPU,
+          default: {
+            x: 3,
+            y: 0,
+            w: 3,
+            h: 4,
+            i: "node-allocatable-cpu"
+          },
+        },
+        "node-allocatable-memory": {
+          component: NodeAllocatableMemory,
+          default: {
+            x: 6,
+            y: 0,
+            w: 3,
+            h: 4,
+            i: "node-allocatable-memory"
+          },
         }
       }
     }
@@ -79,6 +101,7 @@ export default {
         this.layout.push(this.components[k].default)
       })
     }
+    this.$nodes.refresh()
   }
 };
 </script>

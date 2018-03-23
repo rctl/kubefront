@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rctl/kubefront/src/backend/kubefront/authentication"
 	"github.com/rctl/kubefront/src/backend/kubefront/core"
+	"github.com/rctl/kubefront/src/backend/kubefront/nodes"
 )
 
 //Server is a kubefront backend server instance
@@ -36,6 +37,13 @@ func (s *Server) Serve(addr ...string) error {
 	{
 		//Register API routes
 		authentication.Routes(r.Group("/auth/"), s.Context)
+		nodes.Routes(r.Group("/nodes/"), s.Context)
+	}
+	r.Use(core.AuthMiddleware(s.Context))
+	{
+		r.GET("/upstream", func(c *gin.Context) {
+			s.upstreamHandler(c)
+		})
 	}
 	//Start server
 	return r.Run(addr...)
