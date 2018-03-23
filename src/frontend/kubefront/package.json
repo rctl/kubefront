@@ -8,8 +8,11 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "dsmorse-gridster": "^0.7.0",
+    "gridstack": "^0.3.0",
     "materialize-css": "^1.0.0-alpha.3",
     "vue": "^2.5.13",
+    "vue-grid-layout": "^2.1.12",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

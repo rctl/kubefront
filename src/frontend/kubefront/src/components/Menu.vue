@@ -1,49 +1,43 @@
 <template>
-    <div id="menu">
-        
-    </div>
+    <ul id="slide-out" class="sidenav sidenav-fixed z-depth-3">
+        <li>
+            <router-link to="/">
+            <i class="material-icons">dashboard</i>
+            Dashboard
+            </router-link>
+        </li>
+        <li class="bottom">
+            <a href="#" v-on:click="signOut">
+                <i class="material-icons">exit_to_app</i>
+                Sign out
+            </a>
+        </li>
+    </ul>
 </template>
 
 <script>
 export default {
   name: 'Menu',
-  props: {
-      visible: {
-          default: true,
-          type: Boolean
-      }
-  },
-  watch: {
-    visible () {
-        if (this.visible && !this.visible) this.show()
-        else if (!this.visible && this.visible) this.hide()
-    },
-  },
   data() {
     return { 
-        isVisible: false,
+        
     }
   },
   methods: {
-    hide () {
-        this.isVisible = false
-        menu.style.display = "none";
-    },
-    show () {
-        this.isVisible = true
-        menu.style.display = "block";
-    },
+      signOut() {
+          this.$auth.signOut()
+      }
   },
   mounted() {
-      if(this.visible){
-        this.show()
-      }else{
-        this.hide()
-      } 
+    M.Sidenav.init(this.$el.querySelector('.sidenav'), {});
   }
 }
 </script>
 
 <style scoped lang="scss">
-
+    .bottom{
+        position: absolute;
+        bottom: 70px;
+        width: 100%;
+    }
 </style>

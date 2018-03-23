@@ -31,17 +31,18 @@ export default {
 
     //Methods
     signIn(username, password) {
-        var formData = new FormData();
-        formData.set("username", username)
-        formData.set("password", password)
-        return api
-        .post("/auth/", formData)
-        .then(r => {
-            states.signedIn = true
-            localStorage.setItem("token", r.data.token)
-            bus.$emit(broadcasts.SIGNED_IN)
-            return r
-        });
+        return new Promise((resolve, reject) => {
+            var formData = new FormData();
+            formData.set("username", username)
+            formData.set("password", password)
+            api.post("/auth/", formData)
+            .then(r => {
+                states.signedIn = true
+                localStorage.setItem("token", r.data.token)
+                bus.$emit(broadcasts.SIGNED_IN)
+                resolve(r)
+            }).catch(reject);
+        })
     },
 
     signOut() {

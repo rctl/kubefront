@@ -50,6 +50,7 @@ export default {
       })
       .catch(r => {
         //Notify failure to user
+        this.$bus.$emit('done')
         if(r.response){
           M.toast({html: r.response.data})
           this.password = ""
