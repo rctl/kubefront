@@ -9,7 +9,8 @@ let service = {
 
     //Broadcasts
     broadcasts: {
-        UPDATED: "UPDATED"
+        UPDATED: "UPDATED",
+        ADDED: "ADDED"
     },
 
     //Methods
@@ -19,6 +20,7 @@ let service = {
             .then(r => {
                 this.lastUpdate = new Date()
                 this.nodes = r.data
+                bus.$emit(this.broadcasts.ADDED)
                 bus.$emit(this.broadcasts.UPDATED)
             }).catch(reject);
         })
@@ -32,8 +34,22 @@ let service = {
         return new Promise((resolve, reject) => {
            resolve(this.nodes)
         })
-    },
+    }
 }
+
+//Init and listeners
+bus.$on("NODE_CHANGED", (entityID, data) => {
+    let i = service.nodes.findIndex(x => x.metadata.name == entityID)
+    data.lastUpdate = new Date()
+    if(i != -1){
+        service.nodes[i] = data
+        console.log(service.nodes)
+        bus.$emit(service.broadcasts.UPDATED)
+    }else{
+        service.nodes.push(data)
+        bus.$emit(service.broadcasts.ADDED)
+    }
+})
 
 //Export
 export default service

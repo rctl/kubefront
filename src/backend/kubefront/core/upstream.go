@@ -8,15 +8,17 @@ import (
 
 //Upstream is an upstream to a user session
 type Upstream struct {
-	User       string
-	Session    string
-	Connection *websocket.Conn
+	User          string
+	Session       string
+	Subscriptions map[string]bool
+	Connection    *websocket.Conn
 }
 
 //Message is used in websocket communication
 type Message struct {
-	Action string `json:"action"`
-	Data   string `json:"data"`
+	Action string      `json:"action"`
+	Entity string      `json:"entity"`
+	Data   interface{} `json:"data"`
 }
 
 //NotifyAll sends a message to all online users
@@ -27,6 +29,22 @@ func (c *Context) NotifyAll(m *Message) error {
 			if err != nil {
 				fmt.Printf("Failed to send to websocket: %s\n", err.Error())
 				return err
+			}
+		}
+	}
+	return nil
+}
+
+//NotifySubscribers sends a message to all online users that subscribes to a specific topic
+func (c *Context) NotifySubscribers(topic string, m *Message) error {
+	for _, u := range c.Upstreams {
+		for _, s := range u {
+			if sub, exists := s.Subscriptions[topic]; exists && sub {
+				err := s.Connection.WriteJSON(m)
+				if err != nil {
+					fmt.Printf("Failed to send to websocket: %s\n", err.Error())
+					return err
+				}
 			}
 		}
 	}

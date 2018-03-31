@@ -32,9 +32,10 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 		for {
 			n := new(corev1.Node)
 			watcher.Next(n)
-			s.ctx.NotifyAll(&core.Message{
-				Action: "NODE_LIST",
-				Data:   "CHANGED",
+			s.ctx.NotifySubscribers("NODES", &core.Message{
+				Action: "NODE_CHANGED",
+				Entity: *n.Metadata.Name,
+				Data:   n,
 			})
 		}
 	}(s)

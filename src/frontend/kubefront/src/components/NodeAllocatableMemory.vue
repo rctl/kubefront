@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="center">Allocatable CPU</div>
+        <div class="center">Allocatable CPU<span class="right"><a href="#" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
         <div class="wrapper valign-wrapper">
             <h3 class="center content">{{allocatable}}</h3>
         </div>
@@ -13,6 +13,7 @@ export default {
   data() {
     return { 
        allocatable: "0Gi",
+       lastUpdate: new Date(),
     }
   },
   methods: {
@@ -46,7 +47,9 @@ export default {
     this.$nodes.list().then(d => this.calculateAllocatableMemory(d))
     this.$bus.$on(this.$nodes.broadcasts.UPDATED, _ => {
       this.$nodes.list().then(d => this.calculateAllocatableMemory(d))
+      this.lastUpdate = new Date()
     })
+    M.Tooltip.init(this.$el.querySelector('.tooltipped'), {});
   }
 }
 </script>

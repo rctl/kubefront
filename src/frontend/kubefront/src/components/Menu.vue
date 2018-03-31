@@ -6,6 +6,12 @@
             Dashboard
             </router-link>
         </li>
+        <li>
+            <router-link to="/pods">
+            <i class="material-icons">dashboard</i>
+            Pods
+            </router-link>
+        </li>
         <li class="bottom">
             <a href="#" v-on:click="signOut">
                 <i class="material-icons">exit_to_app</i>
