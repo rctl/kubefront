@@ -27,6 +27,7 @@ Kubefront is a dashboard for Kubernetes clusters that simplifies cluster managem
 - Custom built bash scripts to simplify building, running, deploying and testing kubefront will be made.
 - Kubefront workers (go routines launced from the Kubefront API) will be used to make async tasks for the user.
 - Live communication with clients using websockets.
+- To make sure that live communication is fluent and not overflowed a pub/sub system will be made to allow frontend to toggle listeners to topics. When the client subscribes to a topic it will receive broadcasts from that topic, when it unsubscribes the broadcasts will stop.
 
 The image below explains how the Kubefront architecture looks like.
 
