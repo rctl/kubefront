@@ -43,7 +43,6 @@ bus.$on("NODE_CHANGED", (entityID, data) => {
     data.lastUpdate = new Date()
     if(i != -1){
         service.nodes[i] = data
-        console.log(service.nodes)
         bus.$emit(service.broadcasts.UPDATED)
     }else{
         service.nodes.push(data)
