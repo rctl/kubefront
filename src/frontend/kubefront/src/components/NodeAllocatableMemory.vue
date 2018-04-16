@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="center">Allocatable CPU<span class="right"><a href="#" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
+        <div class="center">Allocatable Memory<span class="right"><a href="#" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
         <div class="wrapper valign-wrapper">
             <h3 class="center content">{{allocatable}}</h3>
         </div>
