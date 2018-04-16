@@ -74,12 +74,12 @@ func (s *Server) upstreamHandler(c *gin.Context) {
 		var m core.Message
 		err := conn.ReadJSON(&m)
 		if err != nil {
-			fmt.Println("Failed to decode websocket message: %s", err.Error())
+			fmt.Printf("Failed to decode websocket message: %s\n", err.Error())
 			break
 		}
 		r := s.upstreamMessageHandler(ustream, m)
 		if r != nil {
-			fmt.Println("Failed to encode websocket message: %s", err.Error())
+			fmt.Printf("Failed to encode websocket message: %s\n", err.Error())
 			conn.WriteJSON(r)
 		}
 	}
