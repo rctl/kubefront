@@ -3,7 +3,7 @@
         <li>
             <router-link to="/">
             <i class="material-icons">dashboard</i>
-            Dashboard
+            Nodes
             </router-link>
         </li>
         <li>
