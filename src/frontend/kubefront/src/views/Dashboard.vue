@@ -35,6 +35,7 @@ import VueGridLayout from 'vue-grid-layout'
 import NodeCount from '../components/NodeCount'
 import NodeAllocatableCPU from '../components/NodeAllocatableCPU'
 import NodeAllocatableMemory from '../components/NodeAllocatableMemory'
+import NodeList from '../components/NodeList'
 
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
@@ -57,29 +58,39 @@ export default {
           default: {
             x: 0,
             y: 0,
-            w: 3,
-            h: 4,
+            w: 4,
+            h: 5,
             i: "node-count"
           },
         },
         "node-allocatable-cpu": {
           component: NodeAllocatableCPU,
           default: {
-            x: 3,
+            x: 4,
             y: 0,
-            w: 3,
-            h: 4,
+            w: 4,
+            h: 5,
             i: "node-allocatable-cpu"
           },
         },
         "node-allocatable-memory": {
           component: NodeAllocatableMemory,
           default: {
-            x: 6,
+            x: 8,
             y: 0,
-            w: 3,
-            h: 4,
+            w: 4,
+            h: 5,
             i: "node-allocatable-memory"
+          },
+        },
+        "node-list": {
+          component: NodeList,
+          default: {
+            x: 0,
+            y: 5,
+            w: 12,
+            h: 9,
+            i: "node-list"
           },
         }
       }
@@ -94,8 +105,9 @@ export default {
     },
   },
   mounted() {
-    if(localStorage.getItem("layout") != undefined){
-      this.layout = JSON.parse(localStorage.getItem("layout"))
+    let stored = JSON.parse(localStorage.getItem("layout"));
+    if(localStorage.getItem("layout") != undefined && Object.keys(this.components).length == stored.length){
+      this.layout = stored;
     }else{
       Object.keys(this.components).forEach(k => {
         this.layout.push(this.components[k].default)
