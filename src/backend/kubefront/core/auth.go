@@ -13,7 +13,11 @@ import (
 func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Check token validity
-		token, err := jwt.Parse(c.Request.Header.Get("Token"), func(token *jwt.Token) (interface{}, error) {
+		tokenString := c.Request.Header.Get("Token")
+		if tokenString == "" {
+			tokenString = c.Request.URL.Query().Get("token")
+		}
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				fmt.Println(fmt.Errorf("Unexpected signing method: %v", token.Header["alg"]))
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -21,6 +25,11 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 			return []byte(ctx.Config.JWTSecret), nil
 		})
 		if err != nil || !token.Valid {
+			if err != nil {
+				fmt.Println(err.Error())
+			} else {
+				fmt.Println("Invalid token detected")
+			}
 			c.String(http.StatusForbidden, "Supplied token was not valid.")
 			c.Abort()
 			return
@@ -30,6 +39,7 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			tx, err := ctx.Database.BeginTx(c, nil)
 			if err != nil {
+				fmt.Println(err.Error())
 				c.String(http.StatusInternalServerError, "Could not connect to database.")
 				c.Abort()
 				return
@@ -40,6 +50,7 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 			var count int
 			err = tx.QueryRow("SELECT COUNT(*) FROM sessions WHERE session=? AND username=?", session, username).Scan(&count)
 			if err != nil || count != 1 {
+				fmt.Println(err.Error())
 				c.String(http.StatusForbidden, "Your session has expired. Please sign in again.")
 				c.Abort()
 				return
@@ -86,11 +97,12 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 					return
 				}
 			}
-
+			fmt.Println("User was missing permission")
 			c.String(http.StatusForbidden, "You do not have permission to perform this action.")
 			c.Abort()
 			return
 		}
+		fmt.Println("Token could not be found in request")
 		c.String(http.StatusInternalServerError, "Could not decode supplied access token.")
 		c.Abort()
 	}
@@ -99,6 +111,10 @@ func AuthMiddleware(ctx *Context) gin.HandlerFunc {
 //CORSMiddleware sets headers for CORS
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.URL.Path == "/upstream" {
+			c.Next()
+			return
+		}
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")

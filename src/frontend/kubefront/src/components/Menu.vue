@@ -3,7 +3,13 @@
         <li>
             <router-link to="/">
             <i class="material-icons">dashboard</i>
-            Dashboard
+            Nodes
+            </router-link>
+        </li>
+        <li>
+            <router-link to="/pods">
+            <i class="material-icons">dashboard</i>
+            Pods
             </router-link>
         </li>
         <li class="bottom">

@@ -49,6 +49,10 @@ export default {
     this.signedIn = this.$auth.states.signedIn;
     this.$bus.$on("loading", () => { this.loading = true })
     this.$bus.$on("done", () => { this.loading = false })
+    this.$bus.$on(this.$upstream.CONNECTED, () => {
+      console.log("Connected")
+    })
+    this.$upstream.connect()
   }
 };
 </script>

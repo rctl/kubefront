@@ -101,7 +101,14 @@ export default {
         this.layout.push(this.components[k].default)
       })
     }
+    this.$upstream.subscribe("NODES");
     this.$nodes.refresh()
+  },
+  updated(){
+
+  },
+  destroyed(){
+    this.$upstream.unsubscribe("NODES");
   }
 };
 </script>
