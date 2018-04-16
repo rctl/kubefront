@@ -4,6 +4,8 @@
 
 Kubefront is a dashboard for Kubernetes clusters that simplifies cluster management. The development of kubefront is taking place as a part of a course in advanced web programming at Linköping University. Kubefront allows an administratior to manage and monitor the cluster. Kubefront can be safely exposed publicly and be used by people with limited knowledge of Kubernetes.
 
+> **Note!** This project is currently in development. I advice against using it in production environments until this warning has been removed as testing is still ongoing. Please leave any feedback as an issue. 
+
 **Functional requirements**
 
 *User can*
