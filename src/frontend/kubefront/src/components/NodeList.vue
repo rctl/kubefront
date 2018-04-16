@@ -4,6 +4,9 @@
         <div class="wrapper scroll">
             <ul class="collection full-width">
                 <li class="collection-item" v-for="(l, _) in nodes" :key="_" >
+                    <i 
+                    class="left material-icons teal-text"
+                    >memory</i>
                     {{l.metadata.name}}
                     <a href="#" class="right" v-if="l.warning && l.warning.length > 0"><i 
                     class="right material-icons red-text tooltipped"
