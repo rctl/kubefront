@@ -33,7 +33,8 @@
 <script>
 
 import VueGridLayout from 'vue-grid-layout'
-import NodeCount from '../components/NodeCount'
+import PodCount from '../components/PodCount'
+import PodList from '../components/PodList'
 
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
@@ -51,14 +52,24 @@ export default {
           
       ],
       components: {
-        "node-count": {
-          component: NodeCount,
+        "pod-count": {
+          component: PodCount,
           default: {
             x: 0,
             y: 0,
             w: 4,
             h: 5,
-            i: "node-count"
+            i: "pod-count"
+          },
+        },
+        "pod-list": {
+          component: PodList,
+          default: {
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 5,
+            i: "pod-list"
           },
         }
       }
@@ -71,12 +82,9 @@ export default {
   },
   mounted(){
     this.$upstream.subscribe("PODS");
-    this.$nodes.refresh()
-    /*this.$bus.$on(this.$pods.UPDATED, _ => {
-        this.lastUpdate = new Date()
-    })*/
-    let stored = JSON.parse(localStorage.getItem("layout"));
-    if(localStorage.getItem("layout") != undefined && Object.keys(this.components).length == stored.length){
+    this.$pods.refresh()
+    let stored = JSON.parse(localStorage.getItem("layout-pods"));
+    if(localStorage.getItem("layout-pods") != undefined && Object.keys(this.components).length == stored.length){
       this.layout = stored;
     }else{
       Object.keys(this.components).forEach(k => {

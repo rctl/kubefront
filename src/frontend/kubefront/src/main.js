@@ -8,6 +8,7 @@ import bus from "./bus"
 import api from "./api"
 import auth from "./services/auth"
 import nodes from "./services/nodes"
+import pods from "./services/pods"
 import upstream from "./services/upstream"
 
 Vue.config.productionTip = false
@@ -16,6 +17,7 @@ Vue.prototype.$http = api
 Vue.prototype.$bus = bus
 Vue.prototype.$auth = auth
 Vue.prototype.$nodes = nodes
+Vue.prototype.$pods = pods
 Vue.prototype.$upstream = upstream
 
 Vue.use(require('vue-moment'));

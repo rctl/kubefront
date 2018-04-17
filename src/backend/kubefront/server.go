@@ -9,6 +9,7 @@ import (
 	"github.com/rctl/kubefront/src/backend/kubefront/authentication"
 	"github.com/rctl/kubefront/src/backend/kubefront/core"
 	"github.com/rctl/kubefront/src/backend/kubefront/nodes"
+	"github.com/rctl/kubefront/src/backend/kubefront/pods"
 )
 
 //Server is a kubefront backend server instance
@@ -37,7 +38,8 @@ func (s *Server) Serve(addr ...string) error {
 	{
 		//Register API routes
 		authentication.Routes(r.Group("/auth/"), s.Context)
-		nodes.Routes(r.Group("/nodes/"), s.Context)
+		nodes.Routes(r.Group("/nodes"), s.Context)
+		pods.Routes(r.Group("/pods"), s.Context)
 	}
 	r.Use(core.AuthMiddleware(s.Context))
 	{
