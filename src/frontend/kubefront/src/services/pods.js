@@ -34,11 +34,21 @@ let service = {
         return new Promise((resolve, reject) => {
            resolve(this.pods)
         })
+    },
+    delete(namespace, name) {
+        return api.delete("/pods/" + namespace + "/" + name)
     }
 }
 
 //Init and listeners
 bus.$on("POD_CHANGED", (entityID, data) => {
+    if(data.status.containerStatuses){
+        if(data.status.containerStatuses.every(x => x.state.terminated)){
+            service.pods = service.pods.filter(x => x.metadata.name != entityID)
+            bus.$emit(service.broadcasts.UPDATED)
+            return
+        }
+    }
     let i = service.pods.findIndex(x => x.metadata.name == entityID)
     data.lastUpdate = new Date()
     if(i != -1){
@@ -48,6 +58,18 @@ bus.$on("POD_CHANGED", (entityID, data) => {
         service.pods.push(data)
         bus.$emit(service.broadcasts.ADDED)
     }
+})
+
+bus.$on("JOB_STARTED", (entityID, data) => {
+
+})
+
+bus.$on("JOB_COMPLETED", (entityID, data) => {
+    
+})
+
+bus.$on("JOB_FAILED", (entityID, data) => {
+    
 })
 
 //Export

@@ -35,6 +35,7 @@ export default {
     }
   },
   mounted() {
+    this.$workers.update();
     this.$bus.$on(this.$auth.broadcasts.SIGNED_IN, (r) => {
       this.signedIn = true
       this.$router.push("/")

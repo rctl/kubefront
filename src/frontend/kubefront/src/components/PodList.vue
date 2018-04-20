@@ -7,9 +7,20 @@
                 <div class="group" v-for="(g, _) in l.groups" :key="_">
                     <ul class="collection full-width">
                         <li class="collection-item" v-for="(p, _) in g.pods" :key="_">
-                            <a class='dropdown-trigger left grey-text' href='#' :data-target='p.metadata.name'>
+                            <a class='dropdown-trigger left grey-text' href='#' v-if="p.editable" :data-target='p.metadata.name'>
                                 <i class="material-icons">more_vert</i>
                             </a>
+                            <div v-if="!p.editable" class="preloader-wrapper small active left tooltipped" data-tooltip="There is a job running on this pod" style="height:20px; width: 20px; margin-right:10px;">
+                                <div class="spinner-layer spinner-green-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                                </div>
+                            </div>
                             {{p.metadata.name}}
                             <a href="#" class="right tooltipped"
                                 :data-tooltip="describe(p)">
@@ -18,7 +29,7 @@
                                 <i v-if="p.errors.length > 0" class="material-icons red-text">brightness_1</i>
                             </a>
                             <ul :id='p.metadata.name' class='dropdown-content dropper'>
-                                <li><a href="#!" class="red-text"><i class="material-icons">delete</i> Delete Pod</a></li>
+                                <li><a href="#!" class="red-text" @click="deletePod(p)"><i class="material-icons">delete</i> Delete Pod</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -38,6 +49,13 @@ export default {
     }
   },
   methods: {
+      deletePod(p){
+          p.editable = false;
+          this.$pods.delete(p.metadata.namespace, p.metadata.name).then(this.refresh).catch(() => {
+              p.editable = true;
+              M.toast({html: 'Pod could not be deleted'})
+          })
+      },
       describe(p){
           if(p.errors.length > 0){
               return p.errors.join(', ') + "."
@@ -61,8 +79,11 @@ export default {
                 namespaces[x.metadata.namespace][x.metadata.generateName].push(x);
                 x.warnings = []
                 x.errors = []
+                this.$workers.getByEntity(x.metadata.name).then(w => {
+                    x.editable = w.length == 0;
+                })
                 if(x.status.phase == "Pending"){
-                    x.warnings.push("pod is being created...")
+                    x.warnings.push("changes to this pod are pending")
                 }
                 if(x.status.containerStatuses){
                     x.status.containerStatuses.forEach(s => {

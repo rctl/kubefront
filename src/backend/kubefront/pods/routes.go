@@ -20,6 +20,8 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 	r.Use(core.AuthMiddleware(ctx))
 	{
 		r.GET("/", s.list)
+		r.GET("/:namespace/", s.listNamespace)
+		r.DELETE("/:namespace/:id", s.delete)
 	}
 	go func(s *Service) {
 		//Watch for node changes

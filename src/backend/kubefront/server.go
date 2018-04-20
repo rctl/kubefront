@@ -10,6 +10,7 @@ import (
 	"github.com/rctl/kubefront/src/backend/kubefront/core"
 	"github.com/rctl/kubefront/src/backend/kubefront/nodes"
 	"github.com/rctl/kubefront/src/backend/kubefront/pods"
+	"github.com/rctl/kubefront/src/backend/kubefront/workers"
 )
 
 //Server is a kubefront backend server instance
@@ -27,6 +28,7 @@ func New(ctx context.Context, JWTSectet string, client *k8s.Client, database *sq
 			},
 			Client:   client,
 			Database: database,
+			Workers:  make(map[string]map[string]*core.Worker),
 		},
 	}
 }
@@ -40,6 +42,7 @@ func (s *Server) Serve(addr ...string) error {
 		authentication.Routes(r.Group("/auth/"), s.Context)
 		nodes.Routes(r.Group("/nodes"), s.Context)
 		pods.Routes(r.Group("/pods"), s.Context)
+		workers.Routes(r.Group("/workers"), s.Context)
 	}
 	r.Use(core.AuthMiddleware(s.Context))
 	{
