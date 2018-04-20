@@ -45,7 +45,7 @@ bus.$on("POD_CHANGED", (entityID, data) => {
     if(data.status.containerStatuses){
         if(data.status.containerStatuses.every(x => x.state.terminated)){
             service.pods = service.pods.filter(x => x.metadata.name != entityID)
-            bus.$emit(service.broadcasts.UPDATED)
+            bus.$emit(service.broadcasts.ADDED)
             return
         }
     }

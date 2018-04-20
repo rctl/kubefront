@@ -130,6 +130,9 @@ export default {
     this.$bus.$on(this.$pods.broadcasts.UPDATED, _ => {
       this.refresh()
     })
+    this.$bus.$on("JOB_STARTED", (id, data) => {
+      this.refresh()
+    })
     this.$el.querySelectorAll('.tooltipped').forEach(e => {
         M.Tooltip.init(e, {});
     });
