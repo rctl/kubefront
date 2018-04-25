@@ -16,7 +16,7 @@ Kubefront is a dashboard for Kubernetes clusters that simplifies cluster managem
 - [x] See basic statistics from the cluster
 - [x] Live data for statistics
 - [x] See and manage running pods
-- [ ] See and manage running deployments
+- [x] See and manage running deployments
 - [ ] See and manage services
 - [ ] See and manage ingresses
 
