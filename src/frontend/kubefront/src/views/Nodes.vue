@@ -1,18 +1,18 @@
 <template>
   <div class="container view">
     <div class="card white view">
-      <PodList></PodList>
+      <NodeList></NodeList>
     </div>
   </div>
 </template>
 
 <script>
-import PodList from '../components/PodList'
+import NodeList from '../components/NodeList'
   
 export default {
   name: "Nodes",
   components: {
-    PodList
+    NodeList
   },
   data(){
     return{
@@ -22,14 +22,14 @@ export default {
     
   },
   mounted() {
-    this.$upstream.subscribe("PODS");
-    this.$pods.refresh()
+    this.$upstream.subscribe("NODES");
+    this.$nodes.refresh()
   },
   updated(){
 
   },
   destroyed(){
-    this.$upstream.unsubscribe("PODS");
+    this.$upstream.unsubscribe("NODES");
   }
 };
 </script>

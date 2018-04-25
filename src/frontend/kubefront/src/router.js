@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Welcome from './views/Welcome.vue'
-import Dashboard from './views/Dashboard.vue'
+import Nodes from './views/Nodes.vue'
 import Pods from './views/Pods.vue'
+import Dashboard from './views/Dashboard.vue'
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router({
       path: '/',
       name: 'dashboard',
       component: Dashboard
+    },
+    {
+      path: '/nodes',
+      name: 'nodes',
+      component: Nodes
     },
     {
       path: '/pods',

@@ -36,6 +36,8 @@ import NodeCount from '../components/NodeCount'
 import NodeAllocatableCPU from '../components/NodeAllocatableCPU'
 import NodeAllocatableMemory from '../components/NodeAllocatableMemory'
 import NodeList from '../components/NodeList'
+import PodCount from '../components/PodCount'
+import PodList from '../components/PodList'
 
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
@@ -58,8 +60,8 @@ export default {
           default: {
             x: 0,
             y: 0,
-            w: 4,
-            h: 5,
+            w: 2,
+            h: 4,
             i: "node-count"
           },
         },
@@ -68,18 +70,18 @@ export default {
           default: {
             x: 4,
             y: 0,
-            w: 4,
-            h: 5,
+            w: 2,
+            h: 4,
             i: "node-allocatable-cpu"
           },
         },
         "node-allocatable-memory": {
           component: NodeAllocatableMemory,
           default: {
-            x: 8,
+            x: 6,
             y: 0,
-            w: 4,
-            h: 5,
+            w: 2,
+            h: 4,
             i: "node-allocatable-memory"
           },
         },
@@ -87,10 +89,30 @@ export default {
           component: NodeList,
           default: {
             x: 0,
-            y: 5,
-            w: 12,
-            h: 9,
+            y: 4,
+            w: 6,
+            h: 19,
             i: "node-list"
+          },
+        },
+        "pod-count": {
+          component: PodCount,
+          default: {
+            x: 2,
+            y: 0,
+            w: 2,
+            h: 4,
+            i: "pod-count"
+          },
+        },
+        "pod-list": {
+          component: PodList,
+          default: {
+            x: 6,
+            y: 4,
+            w: 6,
+            h: 19,
+            i: "pod-list"
           },
         }
       }
@@ -114,13 +136,16 @@ export default {
       })
     }
     this.$upstream.subscribe("NODES");
+    this.$upstream.subscribe("PODS");
     this.$nodes.refresh()
+    this.$pods.refresh()
   },
   updated(){
 
   },
   destroyed(){
     this.$upstream.unsubscribe("NODES");
+    this.$upstream.subscribe("PODS");
   }
 };
 </script>

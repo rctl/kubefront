@@ -1,9 +1,9 @@
 <template>
   <div>
     <Loader :active="loading" />
-    <div class="grey lighten-5"  v-bind:class="{ menu: signedIn }">
+    <div v-bind:class="{ menu: signedIn }">
       <Menu v-if="signedIn" />
-      <div id="content" class="grey lighten-5">
+      <div id="content">
         <router-view />
       </div>
     </div>

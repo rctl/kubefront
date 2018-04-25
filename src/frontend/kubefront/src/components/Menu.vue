@@ -2,6 +2,12 @@
     <ul id="slide-out" class="sidenav sidenav-fixed z-depth-3">
         <li>
             <router-link to="/">
+            <i class="material-icons">dashboard</i>
+            Dashboard
+            </router-link>
+        </li>
+        <li>
+            <router-link to="/nodes">
             <i class="material-icons">dns</i>
             Nodes
             </router-link>
