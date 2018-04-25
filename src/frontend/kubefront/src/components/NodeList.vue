@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="center">All Nodes <span class="right"><a href="#" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
+        <div class="center">Nodes <span class="right"><a href="#" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
         <div class="wrapper scroll">
             <ul class="collection full-width">
                 <li class="collection-item" v-for="(l, _) in nodes" :key="_" >

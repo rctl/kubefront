@@ -4,6 +4,7 @@ import Welcome from './views/Welcome.vue'
 import Nodes from './views/Nodes.vue'
 import Pods from './views/Pods.vue'
 import Dashboard from './views/Dashboard.vue'
+import Deployments from './views/Deployments.vue'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/pods',
       name: 'pods',
       component: Pods
+    },
+    {
+      path: '/deployments',
+      name: 'deployments',
+      component: Deployments
     }
   ]
 })

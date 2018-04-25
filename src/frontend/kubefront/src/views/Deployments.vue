@@ -1,18 +1,18 @@
 <template>
   <div class="container view">
-    <div class="card white view">
-      <PodList extended></PodList>
+    <div class="">
+      <DeploymentList extended></DeploymentList>
     </div>
   </div>
 </template>
 
 <script>
-import PodList from '../components/PodList'
+import DeploymentList from '../components/DeploymentList'
   
 export default {
   name: "Nodes",
   components: {
-    PodList
+    DeploymentList
   },
   data(){
     return{
@@ -22,6 +22,8 @@ export default {
     
   },
   mounted() {
+    this.$upstream.subscribe("DEPLOYMENTS");
+    this.$deployments.refresh()
     this.$upstream.subscribe("PODS");
     this.$pods.refresh()
   },
@@ -29,6 +31,7 @@ export default {
 
   },
   destroyed(){
+    this.$upstream.unsubscribe("DEPLOYMENTS");
     this.$upstream.unsubscribe("PODS");
   }
 };

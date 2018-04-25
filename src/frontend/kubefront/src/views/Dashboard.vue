@@ -38,6 +38,7 @@ import NodeAllocatableMemory from '../components/NodeAllocatableMemory'
 import NodeList from '../components/NodeList'
 import PodCount from '../components/PodCount'
 import PodList from '../components/PodList'
+import DeploymentList from '../components/DeploymentList';
 
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
@@ -91,7 +92,7 @@ export default {
             x: 0,
             y: 4,
             w: 6,
-            h: 19,
+            h: 9,
             i: "node-list"
           },
         },
@@ -113,6 +114,16 @@ export default {
             w: 6,
             h: 19,
             i: "pod-list"
+          },
+        },
+        "deployment-list": {
+          component: DeploymentList,
+          default: {
+            x: 0,
+            y: 13,
+            w: 6,
+            h: 10,
+            i: "deployment-list"
           },
         }
       }
@@ -137,15 +148,18 @@ export default {
     }
     this.$upstream.subscribe("NODES");
     this.$upstream.subscribe("PODS");
+    this.$upstream.subscribe("DEPLOYMENTS");
     this.$nodes.refresh()
     this.$pods.refresh()
+    this.$deployments.refresh()
   },
   updated(){
 
   },
   destroyed(){
     this.$upstream.unsubscribe("NODES");
-    this.$upstream.subscribe("PODS");
+    this.$upstream.unsubscribe("DEPLOYMENTS");
+    this.$upstream.unsubscribe("PODS");
   }
 };
 </script>

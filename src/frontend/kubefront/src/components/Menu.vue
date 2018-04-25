@@ -18,6 +18,12 @@
             Pods
             </router-link>
         </li>
+        <li>
+            <router-link to="/deployments">
+            <i class="material-icons">cloud</i>
+            Deployments
+            </router-link>
+        </li>
         <li class="bottom">
             <a href="#" v-on:click="signOut">
                 <i class="material-icons">exit_to_app</i>

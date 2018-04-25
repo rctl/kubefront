@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rctl/kubefront/src/backend/kubefront/authentication"
 	"github.com/rctl/kubefront/src/backend/kubefront/core"
+	"github.com/rctl/kubefront/src/backend/kubefront/deployments"
 	"github.com/rctl/kubefront/src/backend/kubefront/nodes"
 	"github.com/rctl/kubefront/src/backend/kubefront/pods"
 	"github.com/rctl/kubefront/src/backend/kubefront/workers"
@@ -43,6 +44,7 @@ func (s *Server) Serve(addr ...string) error {
 		nodes.Routes(r.Group("/nodes"), s.Context)
 		pods.Routes(r.Group("/pods"), s.Context)
 		workers.Routes(r.Group("/workers"), s.Context)
+		deployments.Routes(r.Group("/deployments"), s.Context)
 	}
 	r.Use(core.AuthMiddleware(s.Context))
 	{
