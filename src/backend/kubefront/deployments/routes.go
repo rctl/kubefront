@@ -34,6 +34,9 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 		for {
 			n := new(v1beta1.Deployment)
 			watcher.Next(n)
+			if n == nil {
+				continue
+			}
 			s.ctx.NotifySubscribers("DEPLOYMENTS", &core.Message{
 				Action: "DEPLOYMENT_CHANGED",
 				Entity: *n.Metadata.Name,

@@ -37,6 +37,17 @@ func (s *Server) upstreamMessageHandler(c *core.Upstream, m core.Message) *core.
 }
 
 func (s *Server) upstreamHandler(c *gin.Context) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			if err, ok := r.(error); ok {
+				fmt.Println(err.Error())
+			} else {
+				fmt.Println("Unknown error in websocket")
+			}
+		}
+	}()
+
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		fmt.Println("Failed to set websocket upgrade: ", err.Error())

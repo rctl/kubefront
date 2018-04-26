@@ -34,6 +34,9 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 		for {
 			n := new(corev1.Service)
 			watcher.Next(n)
+			if n == nil {
+				continue
+			}
 			s.ctx.NotifySubscribers("SERVICES", &core.Message{
 				Action: "SERVICE_CHANGED",
 				Entity: *n.Metadata.Name,

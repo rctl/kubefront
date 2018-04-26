@@ -34,6 +34,9 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 		for {
 			n := new(corev1.Pod)
 			watcher.Next(n)
+			if n == nil {
+				continue
+			}
 			s.ctx.NotifySubscribers("PODS", &core.Message{
 				Action: "POD_CHANGED",
 				Entity: *n.Metadata.Name,
