@@ -12,6 +12,7 @@ import pods from "./services/pods"
 import upstream from "./services/upstream"
 import workers from "./services/workers"
 import deployments from "./services/deployments"
+import services from "./services/services"
 
 Vue.config.productionTip = false
 //Default protos
@@ -23,6 +24,7 @@ Vue.prototype.$pods = pods
 Vue.prototype.$upstream = upstream
 Vue.prototype.$workers = workers
 Vue.prototype.$deployments = deployments
+Vue.prototype.$services = services
 
 Vue.use(require('vue-moment'));
 

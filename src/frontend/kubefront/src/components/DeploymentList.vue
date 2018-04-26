@@ -31,7 +31,7 @@
                             <PodList :labelSelector="d.spec.selector.matchLabels" extended></PodList>
                         </div>
                         <div class="btn-row" v-if="!d.job">
-                            <a class='btn-flat right red-text waves-effect waves-red' href='#' @click="deleteDeployment(d)" v-if="extended">
+                            <a class='btn-flat right red-text waves-effect waves-red' href='javascript:void();' @click="deleteDeployment(d)" v-if="extended">
                                 <i class="material-icons left">delete</i> Delete Deployment
                             </a>
                         </div>
@@ -68,7 +68,7 @@ export default {
             this.deployments = []
             if(d !== undefined){
                 d.forEach(x => {
-                    this.$workers.getByEntity(x.metadata.name).then(w => {
+                    this.$workers.get("deployment", x.metadata.namespace, x.metadata.name).then(w => {
                         x.job = w.length != 0;
                     })
                     this.deployments.push(x)
@@ -124,10 +124,10 @@ export default {
       this.refresh()
     })
     this.$bus.$on("JOB_COMPLETED", (id, data) => {
-      this.refresh()
+      this.$deployments.refresh().then(this.refresh)
     })
     this.$bus.$on("JOB_FAILED", (id, data) => {
-      this.refresh()
+      this.$deployments.refresh().then(this.refresh)
     })
   }
 }

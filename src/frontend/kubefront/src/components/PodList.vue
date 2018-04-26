@@ -1,12 +1,12 @@
 <template>
     <div class="wrapper">
-        <div class="center">Pods <span class="right"><a href="#" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
+        <div class="center">Pods <span class="right"><a href="javascript:void();" class="grey-text tooltipped" :data-tooltip="lastUpdate|moment('from', 'now')"><i class="material-icons">info</i></a></span></div>
         <div class="wrapper scroll">
             <div class="collection-item" v-for="(l, _) in pods" :key="_">
                 <b class="namespace">{{l.namespace}}</b>
                 <ul class="pods">
                     <li class="item" v-for="(p, _) in l.pods" :key="_">
-                        <a class='dropdown-trigger left grey-text' href='#' v-if="p.editable && extended" :data-target='p.metadata.name'>
+                        <a class='dropdown-trigger left grey-text' href='javascript:void();' v-if="p.editable && extended" :data-target='p.metadata.name'>
                             <i class="material-icons">more_vert</i>
                         </a>
                         <div v-if="!p.editable" class="preloader-wrapper small active left tooltipped" data-tooltip="There is a job running on this pod" style="height:20px; width: 20px; margin-right:10px;">
@@ -21,14 +21,14 @@
                             </div>
                         </div>
                         {{p.metadata.name}}
-                        <a href="#" class="right tooltipped"
+                        <a href="javascript:void();" class="right tooltipped"
                             :data-tooltip="describe(p)">
                             <i v-if="p.warnings.length == 0 && p.errors.length == 0" class="material-icons green-text">brightness_1</i>
                             <i v-if="p.warnings.length > 0 && p.errors.length == 0" class="material-icons yellow-text">brightness_1</i>
                             <i v-if="p.errors.length > 0" class="material-icons red-text">brightness_1</i>
                         </a>
                         <ul :id='p.metadata.name' class='dropdown-content dropper'>
-                            <li><a href="#!" class="red-text" @click="deletePod(p)"><i class="material-icons">delete</i> Delete Pod</a></li>
+                            <li><a href="javascript:void();" class="red-text" @click="deletePod(p)"><i class="material-icons">delete</i> Delete Pod</a></li>
                         </ul>
                     </li>
                 </ul>  
@@ -140,6 +140,12 @@ export default {
     })
     this.$bus.$on("JOB_STARTED", (id, data) => {
       this.refresh()
+    })
+    this.$bus.$on("JOB_COMPLETED", (id, data) => {
+      this.$pods.refresh().then(this.refresh)
+    })
+    this.$bus.$on("JOB_FAILED", (id, data) => {
+      this.$pods.refresh().then(this.refresh)
     })
     this.$el.querySelectorAll('.tooltipped').forEach(e => {
         M.Tooltip.init(e, {});

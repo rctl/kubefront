@@ -21,20 +21,51 @@ let service = {
             resolve(this.jobs.filter(x => x.entity == id))
         })
     },
+    get(kind, namespace, name){
+        return new Promise((resolve, reject) => {
+            resolve(this.jobs.filter(x => x.kind == kind && x.namespace == namespace && x.name == name))
+        })
+    },
     update(){
         return api.get("/workers/")
         .then(r => {
-            this.jobs = r.data
+            r.data.forEach(x => {
+                if(x.entity.includes("/")){
+                    this.jobs.push({
+                        id: x.id,
+                        kind: x.entity.split("/")[0],
+                        namespace: x.entity.split("/")[1],
+                        name: x.entity.split("/")[2],
+                        entity: x.entity,
+                    })
+                }else{
+                    service.jobs.push({
+                        id: x.id,
+                        entity: x.entity,
+                    })
+                }
+            });
         });
     }
 
 }
 
 bus.$on("JOB_STARTED", (id, data) => {
-    service.jobs.push({
-        id: id,
-        entity: data,
-    })
+    if(data.includes("/")){
+        //V2 (Fully Qualified ID)
+        service.jobs.push({
+            id: id,
+            kind: data.split("/")[0],
+            namespace: data.split("/")[1],
+            name: data.split("/")[2],
+            entity: data,
+        })
+    }else{
+        service.jobs.push({
+            id: id,
+            entity: data,
+        })
+    }
 })
 
 bus.$on("JOB_COMPLETED", (id, data) => {

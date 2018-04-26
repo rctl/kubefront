@@ -24,7 +24,7 @@ func (s *Service) listNamespace(c *gin.Context) {
 }
 
 func (s *Service) delete(c *gin.Context) {
-	id, _ := s.ctx.RunWorker(c.MustGet("username").(string), c.Param("id"), func(ctx context.Context) (interface{}, error) {
+	id, _ := s.ctx.RunWorker(c.MustGet("username").(string), "service/"+c.Param("namespace")+"/"+c.Param("id"), func(ctx context.Context) (interface{}, error) {
 		service := &corev1.Service{
 			Metadata: &metav1.ObjectMeta{
 				Name:      k8s.String(c.Param("id")),
