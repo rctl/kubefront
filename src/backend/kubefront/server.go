@@ -11,6 +11,7 @@ import (
 	"github.com/rctl/kubefront/src/backend/kubefront/deployments"
 	"github.com/rctl/kubefront/src/backend/kubefront/nodes"
 	"github.com/rctl/kubefront/src/backend/kubefront/pods"
+	"github.com/rctl/kubefront/src/backend/kubefront/services"
 	"github.com/rctl/kubefront/src/backend/kubefront/workers"
 )
 
@@ -45,6 +46,7 @@ func (s *Server) Serve(addr ...string) error {
 		pods.Routes(r.Group("/pods"), s.Context)
 		workers.Routes(r.Group("/workers"), s.Context)
 		deployments.Routes(r.Group("/deployments"), s.Context)
+		services.Routes(r.Group("/services"), s.Context)
 	}
 	r.Use(core.AuthMiddleware(s.Context))
 	{

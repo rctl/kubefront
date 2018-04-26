@@ -39,6 +39,7 @@ import NodeList from '../components/NodeList'
 import PodCount from '../components/PodCount'
 import PodList from '../components/PodList'
 import DeploymentList from '../components/DeploymentList';
+import ServiceList from '../components/ServiceList'
 
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
@@ -79,20 +80,20 @@ export default {
         "node-allocatable-memory": {
           component: NodeAllocatableMemory,
           default: {
-            x: 6,
-            y: 0,
+            x: 0,
+            y: 4,
             w: 2,
-            h: 4,
+            h: 5,
             i: "node-allocatable-memory"
           },
         },
         "node-list": {
           component: NodeList,
           default: {
-            x: 0,
+            x: 2,
             y: 4,
-            w: 6,
-            h: 9,
+            w: 4,
+            h: 5,
             i: "node-list"
           },
         },
@@ -109,8 +110,8 @@ export default {
         "pod-list": {
           component: PodList,
           default: {
-            x: 6,
-            y: 4,
+            x: 0,
+            y: 9,
             w: 6,
             h: 19,
             i: "pod-list"
@@ -119,11 +120,21 @@ export default {
         "deployment-list": {
           component: DeploymentList,
           default: {
-            x: 0,
-            y: 13,
-            w: 6,
-            h: 10,
+            x: 8,
+            y: 9,
+            w: 4,
+            h: 28,
             i: "deployment-list"
+          },
+        },
+        "service-list": {
+          component: ServiceList,
+          default: {
+            x: 6,
+            y: 0,
+            w: 2,
+            h: 28,
+            i: "service-list"
           },
         }
       }
@@ -149,9 +160,11 @@ export default {
     this.$upstream.subscribe("NODES");
     this.$upstream.subscribe("PODS");
     this.$upstream.subscribe("DEPLOYMENTS");
+    this.$upstream.subscribe("SERVICES");
     this.$nodes.refresh()
     this.$pods.refresh()
     this.$deployments.refresh()
+    this.$services.refresh()
   },
   updated(){
 
@@ -160,6 +173,7 @@ export default {
     this.$upstream.unsubscribe("NODES");
     this.$upstream.unsubscribe("DEPLOYMENTS");
     this.$upstream.unsubscribe("PODS");
+    this.$upstream.unsubscribe("SERVICES");
   }
 };
 </script>

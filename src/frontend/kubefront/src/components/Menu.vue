@@ -24,6 +24,12 @@
             Deployments
             </router-link>
         </li>
+        <li>
+            <router-link to="/services">
+            <i class="material-icons">traffic</i>
+            Services
+            </router-link>
+        </li>
         <li class="bottom">
             <a href="#" v-on:click="signOut">
                 <i class="material-icons">exit_to_app</i>

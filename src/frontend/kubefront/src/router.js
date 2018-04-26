@@ -5,6 +5,7 @@ import Nodes from './views/Nodes.vue'
 import Pods from './views/Pods.vue'
 import Dashboard from './views/Dashboard.vue'
 import Deployments from './views/Deployments.vue'
+import Services from './views/Services.vue'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/deployments',
       name: 'deployments',
       component: Deployments
+    },
+    {
+      path: '/services',
+      name: 'services',
+      component: Services
     }
   ]
 })

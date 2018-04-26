@@ -29,6 +29,11 @@ let service = {
             bus.$emit(this.MESSAGE, data)
             bus.$emit(data.action, data.entity, data.data)
         };
+        setInterval(() => {
+            this.socket.send(JSON.stringify({
+                action: "PING"
+            }))
+        }, 5000)
     },
     subscribe(topic){
         if(this.socket != null){
