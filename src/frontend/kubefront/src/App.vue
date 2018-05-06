@@ -11,6 +11,7 @@
 </template>
 
 <script>
+//Components
 import Loader from "@/components/Loader.vue";
 import Menu from "@/components/Menu.vue";
 
@@ -35,7 +36,9 @@ export default {
     }
   },
   mounted() {
-    this.$workers.update();
+    
+
+    //Authentication states
     this.$bus.$on(this.$auth.broadcasts.SIGNED_IN, (r) => {
       this.signedIn = true
       this.$router.push("/")
@@ -48,11 +51,13 @@ export default {
       this.$router.push("auth")
     }
     this.signedIn = this.$auth.states.signedIn;
+
+    //Loading spinner
     this.$bus.$on("loading", () => { this.loading = true })
     this.$bus.$on("done", () => { this.loading = false })
-    this.$bus.$on(this.$upstream.CONNECTED, () => {
-      console.log("Connected")
-    })
+
+    //App global data load
+    this.$workers.update();
     this.$upstream.connect()
   }
 };

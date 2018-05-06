@@ -7,6 +7,7 @@
 </template>
 
 <script>
+//Components
 import NodeList from '../components/NodeList'
   
 export default {
@@ -22,6 +23,7 @@ export default {
     
   },
   mounted() {
+    //Subcribe to topics needed for this view and fetch initial data
     this.$upstream.subscribe("NODES");
     this.$nodes.refresh()
   },
@@ -29,6 +31,7 @@ export default {
 
   },
   destroyed(){
+    //Unsubscribe to topics
     this.$upstream.unsubscribe("NODES");
   }
 };

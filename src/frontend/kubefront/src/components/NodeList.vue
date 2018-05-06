@@ -36,6 +36,9 @@ export default {
     }
   },
   methods: {
+      /**
+       * Refresh the list of nodes
+       */
       refresh(){
         this.$nodes.list().then(d => this.nodes = d).then(_ => {
             this.nodes.forEach(x => {
@@ -76,6 +79,7 @@ export default {
       }
   },
   updated() {
+    //When UI is updated, initalize MD components that are not already initialized
     this.$el.querySelectorAll('.tooltipped').forEach(e => {
         if(!e.getAttribute("init")){
             e.setAttribute("init", true)
@@ -84,10 +88,12 @@ export default {
     });
   },
   mounted() {
+    //Initial data load and event handlers
     this.refresh()
     this.$bus.$on(this.$nodes.broadcasts.UPDATED, _ => {
       this.refresh()
     })
+    //Initialize lastUpdate tooltip
     this.$el.querySelectorAll('.tooltipped').forEach(e => {
         M.Tooltip.init(e, {});
     });

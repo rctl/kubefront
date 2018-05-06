@@ -11,7 +11,6 @@
             :margin="[10, 10]"
             :use-css-transforms="true"
     >
-
         <grid-item class="card" v-for="item in layout"
                   :x="item.x"
                   :y="item.y"
@@ -31,7 +30,7 @@
 </template>
 
 <script>
-import VueGridLayout from 'vue-grid-layout'
+//Components
 import NodeCount from '../components/NodeCount'
 import NodeAllocatableCPU from '../components/NodeAllocatableCPU'
 import NodeAllocatableMemory from '../components/NodeAllocatableMemory'
@@ -41,6 +40,8 @@ import PodList from '../components/PodList'
 import DeploymentList from '../components/DeploymentList';
 import ServiceList from '../components/ServiceList'
 
+//Grid
+import VueGridLayout from 'vue-grid-layout'
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
   
@@ -52,14 +53,13 @@ export default {
   },
   data(){
     return{
-      //Default layout 
       layout: [
           
       ],
       components: {
         "node-count": {
           component: NodeCount,
-          default: {
+          default: { //Default layout for NodeCount component
             x: 0,
             y: 0,
             w: 2,
@@ -141,14 +141,13 @@ export default {
     }
   },
   methods: {
-    signOut(){
-        this.$auth.signOut()
-    },
     changed: function(){
+      //Store layout locally when it is changed
       localStorage.setItem("layout", JSON.stringify(this.layout))
     },
   },
   mounted() {
+    //Restore layout if previously stored
     let stored = JSON.parse(localStorage.getItem("layout"));
     if(localStorage.getItem("layout") != undefined && Object.keys(this.components).length == stored.length){
       this.layout = stored;
@@ -157,6 +156,7 @@ export default {
         this.layout.push(this.components[k].default)
       })
     }
+    //Subcribe to topics and load initial data
     this.$upstream.subscribe("NODES");
     this.$upstream.subscribe("PODS");
     this.$upstream.subscribe("DEPLOYMENTS");
@@ -170,6 +170,7 @@ export default {
 
   },
   destroyed(){
+    //Unsubscribe to topics
     this.$upstream.unsubscribe("NODES");
     this.$upstream.unsubscribe("DEPLOYMENTS");
     this.$upstream.unsubscribe("PODS");

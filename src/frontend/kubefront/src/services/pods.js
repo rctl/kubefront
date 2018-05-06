@@ -1,6 +1,7 @@
 import bus from "../bus"
 import api from "../api"
 import router from '../router'
+
 let service = {
 
     //Properties
@@ -9,11 +10,14 @@ let service = {
 
     //Broadcasts
     broadcasts: {
-        UPDATED: "UPDATED",
-        ADDED: "ADDED"
+        UPDATED: "POD_UPDATED",
+        ADDED: "POD_ADDED"
     },
 
     //Methods
+    /**
+     * Force a state sync
+     */
     refresh() {
         return new Promise((resolve, reject) => {
             api.get("/pods/")
@@ -25,22 +29,33 @@ let service = {
             }).catch(reject);
         })
     },
+    /**
+     * Returns a Promise yeilding the number of pods in existance
+     */
     count() {
         return new Promise((resolve, reject) => {
            resolve(this.pods.length)
         })
     },
+    /**
+     * Returns a Promise yeilding a list with pods in existance
+     */
     list() {
         return new Promise((resolve, reject) => {
            resolve(this.pods)
         })
     },
+    /**
+     * Start a deletion job. Returns a request Promise
+     * @param  {string} namespace - The namespace of the resource to be deleted
+     * @param  {string} name - The name of the resource to be deleted
+     */
     delete(namespace, name) {
         return api.delete("/pods/" + namespace + "/" + name)
     }
 }
 
-//Init and listeners
+//Handle to events informing that a pod has been changed
 bus.$on("POD_CHANGED", (entityID, data) => {
     if(data.status.containerStatuses){
         if(data.status.containerStatuses.every(x => x.state.terminated)){
@@ -58,18 +73,6 @@ bus.$on("POD_CHANGED", (entityID, data) => {
         service.pods.push(data)
         bus.$emit(service.broadcasts.ADDED)
     }
-})
-
-bus.$on("JOB_STARTED", (entityID, data) => {
-
-})
-
-bus.$on("JOB_COMPLETED", (entityID, data) => {
-    
-})
-
-bus.$on("JOB_FAILED", (entityID, data) => {
-    
 })
 
 //Export

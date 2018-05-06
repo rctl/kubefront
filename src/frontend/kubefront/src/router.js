@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+//Views
 import Welcome from './views/Welcome.vue'
 import Nodes from './views/Nodes.vue'
 import Pods from './views/Pods.vue'

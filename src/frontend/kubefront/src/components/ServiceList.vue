@@ -40,7 +40,9 @@
 </template>
 
 <script>
+//Components
 import PodList from '../components/PodList'
+
 export default {
   name: 'ServiceList',
   data() {
@@ -59,6 +61,10 @@ export default {
       }
   },
   methods: {
+      /**
+       * Delete a service
+       * @param {service} s - Service to be deleted
+       */
       deleteService(s){
           s.job = true;
           this.$services.delete(s.metadata.namespace, s.metadata.name).then(this.refresh).catch(() => {
@@ -66,6 +72,9 @@ export default {
               M.toast({html: 'Service could not be deleted'})
           })
       },
+      /**
+       * Refresh list of services
+       */
       refresh(){
         this.$services.list().then(d =>{
             this.services = []
@@ -91,6 +100,7 @@ export default {
       }
   },
   updated() {
+    //When UI updates, initialize all UI components that have not been initialzed
     this.$el.querySelectorAll('.tooltipped').forEach(e => {
         if(!e.getAttribute("init")){
             e.setAttribute("init", true)
@@ -115,6 +125,7 @@ export default {
     }
   },
   mounted() {
+    //Data reactions
     this.refresh()
     this.$bus.$on(this.$services.broadcasts.UPDATED, _ => {
       this.refresh()

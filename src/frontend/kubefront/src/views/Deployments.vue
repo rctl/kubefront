@@ -7,6 +7,7 @@
 </template>
 
 <script>
+//Components
 import DeploymentList from '../components/DeploymentList'
   
 export default {
@@ -22,15 +23,17 @@ export default {
     
   },
   mounted() {
+    //Subcribe to topics needed for this view and fetch initial data
     this.$upstream.subscribe("DEPLOYMENTS");
-    this.$deployments.refresh()
     this.$upstream.subscribe("PODS");
+    this.$deployments.refresh()
     this.$pods.refresh()
   },
   updated(){
 
   },
   destroyed(){
+    //Unsubscribe to topics
     this.$upstream.unsubscribe("DEPLOYMENTS");
     this.$upstream.unsubscribe("PODS");
   }

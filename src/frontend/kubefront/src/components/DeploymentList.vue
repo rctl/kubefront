@@ -43,6 +43,7 @@
 </template>
 
 <script>
+//Subcomponents
 import PodList from '../components/PodList'
 
 export default {
@@ -63,6 +64,9 @@ export default {
       }
   },
   methods: {
+    /**
+     * Reload local state from service data
+     */
       refresh(){
         this.$deployments.list().then(d => {
             this.deployments = []
@@ -78,6 +82,10 @@ export default {
             this.lastUpdate = new Date()
         })
       },
+      /**
+     * Start a deletion job for deployment
+     * @param {Object} d - Deployment to be deleted
+     */
       deleteDeployment(d){
           this.$deployments.delete(d.metadata.namespace, d.metadata.name).then(this.refresh).catch(() => {
               p.job = true;
@@ -86,6 +94,7 @@ export default {
       }
   },
   updated() {
+    //Intitialize all MD components that has not already been initialized
     this.$el.querySelectorAll('.tooltipped').forEach(e => {
         if(!e.getAttribute("init")){
             e.setAttribute("init", true)
@@ -110,16 +119,15 @@ export default {
     }
   },
   mounted() {
+    //Load data from service
     this.refresh()
+    //Setup event handlers
     this.$bus.$on(this.$deployments.broadcasts.UPDATED, _ => {
       this.refresh()
     })
     this.$bus.$on(this.$deployments.broadcasts.ADDED, _ => {
       this.refresh()
     })
-    this.$el.querySelectorAll('.tooltipped').forEach(e => {
-        M.Tooltip.init(e, {});
-    });
     this.$bus.$on("JOB_STARTED", (id, data) => {
       this.refresh()
     })
@@ -129,6 +137,10 @@ export default {
     this.$bus.$on("JOB_FAILED", (id, data) => {
       this.$deployments.refresh().then(this.refresh)
     })
+    //Initialize lastUpdated tooltip
+    this.$el.querySelectorAll('.tooltipped').forEach(e => {
+        M.Tooltip.init(e, {});
+    });
   }
 }
 </script>

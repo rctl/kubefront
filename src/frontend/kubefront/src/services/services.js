@@ -15,6 +15,9 @@ let service = {
     },
 
     //Methods
+    /**
+     * Force state sync
+     */
     refresh() {
         return new Promise((resolve, reject) => {
             api.get("/services/")
@@ -26,22 +29,33 @@ let service = {
             }).catch(reject);
         })
     },
+    /**
+     * Returns a Promise which yeilds the number of services in existance
+     */
     count() {
         return new Promise((resolve, reject) => {
            resolve(this.services.length)
         })
     },
+    /**
+     * Returns a Promise which yeilds the list of services in existance
+     */
     list() {
         return new Promise((resolve, reject) => {
            resolve(this.services)
         })
     },
+    /**
+     * Start a deletion job. Returns a request Promise
+     * @param  {string} namespace - The namespace of the resource to be deleted
+     * @param  {string} name - The name of the resource to be deleted
+     */
     delete(namespace, name) {
         return api.delete("/services/" + namespace + "/" + name)
     }
 }
 
-//Init and listeners
+//Handle to events informing that a service has been changed
 bus.$on("SERVICE_CHANGED", (entityID, data) => {
     if(data.status.replicas == 0){
         service.services = service.services.filter(x => x.metadata.name != entityID)

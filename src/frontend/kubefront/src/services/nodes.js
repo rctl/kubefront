@@ -9,11 +9,14 @@ let service = {
 
     //Broadcasts
     broadcasts: {
-        UPDATED: "UPDATED",
-        ADDED: "ADDED"
+        UPDATED: "NODE_UPDATED",
+        ADDED: "NODE_ADDED"
     },
 
     //Methods
+    /**
+     * Force state sync
+     */
     refresh() {
         return new Promise((resolve, reject) => {
             api.get("/nodes/")
@@ -25,11 +28,17 @@ let service = {
             }).catch(reject);
         })
     },
+    /**
+     * Returns a Promise yeilding the count of nodes in existance
+     */
     count() {
         return new Promise((resolve, reject) => {
            resolve(this.nodes.length)
         })
     },
+    /**
+     * Returns a Promise yeilding a list with nodes in existance
+     */
     list() {
         return new Promise((resolve, reject) => {
            resolve(this.nodes)
@@ -37,7 +46,7 @@ let service = {
     }
 }
 
-//Init and listeners
+//Handle to events informing that a node has been changed
 bus.$on("NODE_CHANGED", (entityID, data) => {
     let i = service.nodes.findIndex(x => x.metadata.name == entityID)
     data.lastUpdate = new Date()

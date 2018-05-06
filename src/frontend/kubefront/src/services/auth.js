@@ -49,7 +49,6 @@ export default {
             }).catch(reject);
         })
     },
-
     signOut() {
         states.signedIn = false
         localStorage.removeItem("token")

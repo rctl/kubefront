@@ -1,3 +1,4 @@
+//Global imports required to run the app
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -14,10 +15,14 @@ import workers from "./services/workers"
 import deployments from "./services/deployments"
 import services from "./services/services"
 
+//Vue global config
 Vue.config.productionTip = false
-//Default protos
+
+//System components
 Vue.prototype.$http = api
 Vue.prototype.$bus = bus
+
+//Services
 Vue.prototype.$auth = auth
 Vue.prototype.$nodes = nodes
 Vue.prototype.$pods = pods
@@ -26,6 +31,7 @@ Vue.prototype.$workers = workers
 Vue.prototype.$deployments = deployments
 Vue.prototype.$services = services
 
+//Vue
 Vue.use(require('vue-moment'));
 
 new Vue({
