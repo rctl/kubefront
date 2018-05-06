@@ -34,7 +34,7 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 		for {
 			n := new(v1beta1.Deployment)
 			watcher.Next(n)
-			if n == nil {
+			if n == nil || n.Metadata == nil {
 				continue
 			}
 			s.ctx.NotifySubscribers("DEPLOYMENTS", &core.Message{

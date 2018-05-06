@@ -32,7 +32,7 @@ func Routes(r *gin.RouterGroup, ctx *core.Context) {
 		for {
 			n := new(corev1.Node)
 			watcher.Next(n)
-			if n == nil {
+			if n == nil || n.Metadata == nil {
 				continue
 			}
 			s.ctx.NotifySubscribers("NODES", &core.Message{
