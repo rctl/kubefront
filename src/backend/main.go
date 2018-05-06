@@ -18,6 +18,7 @@ import (
 )
 
 func main() {
+	//Read kubernetes configuration file
 	secret := flag.String("secret", "", "(required) secret key to use for user token validation")
 	var kubeconfig *string
 	if home := os.Getenv("HOME"); home != "" {
@@ -42,21 +43,26 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+	//Create kubernetes client
 	client, err := k8s.NewClient(&config)
 	if err != nil {
 		panic(err.Error())
 	}
+	//Create database client
 	db, err := sql.Open("sqlite3", *dbpath)
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
+	//Setup context
 	ctx := context.Background()
+	//Create new kubefron instance
 	k := kubefront.New(ctx, *secret, client, db)
 	if err := k.InititalizeEmptyDatabase(); err != nil {
 		fmt.Println("Failed to initialize database.")
 		fmt.Println(err.Error())
 	}
+	//Create new admin user if none exists
 	password, err := k.CreateAdminUser()
 	if err != nil {
 		fmt.Println("Failed to create admin user.")
@@ -64,6 +70,7 @@ func main() {
 	} else {
 		fmt.Printf("Admin password is: %s\n", password)
 	}
+	//Listen for interrupts for peaceful shutdown
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	go func() {
@@ -74,6 +81,7 @@ func main() {
 			os.Exit(0)
 		}
 	}()
+	//Start HTTP server
 	err = k.Serve(":8081")
 	if err != nil {
 		k.Done()

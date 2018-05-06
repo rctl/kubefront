@@ -9,6 +9,7 @@ import (
 	"github.com/rctl/kubefront/src/backend/kubefront/core"
 )
 
+//Websocket configuration
 var wsupgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -18,8 +19,8 @@ var wsupgrader = websocket.Upgrader{
 }
 
 func (s *Server) upstreamMessageHandler(c *core.Upstream, m core.Message) *core.Message {
-	//Find upstream
 	if m.Action == "SUBSCRIBE" {
+		//Set user subscription
 		c.Subscriptions[m.Entity] = true
 		c.Connection.WriteJSON(&core.Message{
 			Action: "SUBSCRIPTIONS_UPDATED",
@@ -27,6 +28,7 @@ func (s *Server) upstreamMessageHandler(c *core.Upstream, m core.Message) *core.
 		})
 	}
 	if m.Action == "UNSUBSCRIBE" {
+		//Clear user subscription
 		c.Subscriptions[m.Entity] = false
 		c.Connection.WriteJSON(&core.Message{
 			Action: "SUBSCRIPTIOS_UPDATED",
@@ -38,6 +40,7 @@ func (s *Server) upstreamMessageHandler(c *core.Upstream, m core.Message) *core.
 
 func (s *Server) upstreamHandler(c *gin.Context) {
 
+	//Recover in case of websocket failure
 	defer func() {
 		if r := recover(); r != nil {
 			if err, ok := r.(error); ok {
@@ -48,6 +51,7 @@ func (s *Server) upstreamHandler(c *gin.Context) {
 		}
 	}()
 
+	//Upgrade connection to websocket
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		fmt.Println("Failed to set websocket upgrade: ", err.Error())
